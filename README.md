@@ -183,4 +183,113 @@
     ```
 
 - ACTIONS, STORES, AND REDUCERS:
-  - 
+  - Actions:
+    - Action creators: Plain objects containing a description of the event. 
+      - Must have a type property.
+      - Do not pass around anything that is not serializable, like a function or a promise.
+      - Action creators are not required.
+  - Store:
+    - Single responsibility principle.
+    ```javascript
+      let store = createStore(reducer);
+      store.dispatch(action);
+      store.subscribe(listener);
+      store.getState();
+      replaceReducer(nextReducer);
+    ```
+    - Must dispatch an action in order to update store.
+  - Immutability:
+    - To change state, return a new object.
+    - Immutable already: number, string, boolean, undefined, null
+    - Mutable: Objects, arrays, functions.
+    - So, do not assign value to a property.
+    - Easy ways to copy objects in JavaScript:
+      - Object.assign creates a new object allowing us to use existing objects as a template.
+        ```javascript
+          Object.assign(target, ...sources);
+          Object.assign({}, state, { role: 'admin' });
+        ```
+      - First parameter should be an empty obeject (in order to copy.)
+      - Spread operator. Three dots. Ensures shallow copy.
+        - Creates a new object or array.
+        - Only creates a shallow copy, so you need to manually close nested objects if they are changing.
+        ```javascript
+          const copy = { ...user, address: {...user.adderss }};
+        ```
+        - Avoid blindly deep cloning. Expensive. Wasteful. Unnecessary renders.
+        - libraries: immer.  Immutable.js.
+      - Map. Filter. Reduce. Concat. Spread: Avoid Push. Pop. Reverse.
+    - Why?
+      - Clarity: Who changed that state? We know when and how. Reducer.
+      - Performance: Each property: Has this changed? Reference comparison.
+        - Is the old state referencing a new space in memory?
+          - No? Then do not re-render.
+      - Awesome sauce: Debugging. Time travel. Play interactions back.
+        - Each state change can be played, replayed.
+    - Enforcing:
+      - Trust:
+      - Warn: redux-immutable-state-invariant.
+      - Enforce: Immer. Immutable.js. seamless-immutable.
+  - Reducers:
+    - A function that takes state in an action and returns new state.
+      ```javascript
+        function myReducer(state, action) {
+          // return new state based upon the action type passed.
+        }
+      ```
+    - Reducers must be pure functions:
+      - Never: Mutate arguments.
+      - Never: Perform side effects.
+      - Never: Call non-pure functions. e.g.: math.random(). date.now().
+    - Reducers should return an updated copy of state. 
+      - Redux will use that copy to update the store.
+    - One store: Multiple reducers. 
+      - All reducers are called when an action is dispatched.
+      - All reduces should return the untouched state.
+    - Reducer: *Slice* of state. Handle pieces of the store in isolation.
+      - Each action can be handled by 1:M reducers. 
+      - And 1:M reducers can handle each action.
+
+- CONNECTING REACT TO REDUX:
+  - Container versus presentastional components:
+    - Smart and dumb components.
+      - How things work versus how things look.
+      - Smart: Subscribe to Redux state. Dispatch Redux actions.
+      - Dumb: Read data from props. Invoke callbacks on props.
+  - React-Redux:
+    - A seperate library since Redux is not exclusive to React.
+      - Provider: Used at App root. Attaches the App to the Redux store.
+        ```javascript
+          <Provider store={this.props.store}>
+            <App />
+          </Provider>
+        ```
+      - It uses Context to pull this off.
+      - Connnect:
+          - Flux:
+            ```javascript
+              componentWillMount() {
+                AuthorStore.addChangeListener(this.obChange);
+              }
+              componentWillUnmount() {
+                AuthorStore.removeChangeListener(this.obChange);
+              }
+              onChange() {
+                this.setState({authors: AuthorStore.getAll()});
+              }
+            ```
+            - Redux:
+              ```javascript
+                function mapStateToProps(state, ownProps) {
+                  return { authors: state.authors };
+                }
+                export default connect(mapStateToProps, mapDispatchToProps)(AuthorPage);
+            ```
+            - What state do you want to pass to your component on props?
+            - What actions do you want to pass to your component on props?
+            - Redux benefits: No manual unsubscribe.
+            - Declare what subset of state you want. Enhanced performance for free.
+      - mapStateToProps:
+      - mapDispatchToProps:
+  - A chat with Redux:
+    - 

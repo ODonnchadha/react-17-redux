@@ -1,6 +1,9 @@
 import React from "react";
+// NOTE: React Router handles clicks on any Link component 
+//   so that the page willl not post back.
 import { Link } from "react-router-dom";
 
+// NOTE: Bootstrap.
 const HomePage = () => (
   <div className="jumbotron">
     <h1>Pluralsight Administration</h1>
@@ -11,4 +14,5 @@ const HomePage = () => (
   </div>
 );
 
+// Functional component.
 export default HomePage;

@@ -1,5 +1,6 @@
 import React from "react";
 
-const PageNotFound = () => <h1>Oops! Page not found.</h1>;
+// Handle all invalid routes.
+const PageNotFound = () => <h1>Keyboard not found. Press F1 to continue.</h1>;
 
 export default PageNotFound;

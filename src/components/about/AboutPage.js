@@ -1,5 +1,8 @@
 import React from "react";
 
+// No return needed with the arrow syntax.
+// Omit the return because it's implied when the 
+//   right-hand side is a single expression.
 const AboutPage = () => (
   <div>
     <h2>About</h2>
@@ -10,4 +13,5 @@ const AboutPage = () => (
   </div>
 );
 
+// Functional component.
 export default AboutPage;

@@ -29,3 +29,33 @@
 
 - ENVIRONMENT BUILD:
   - Build a development environment.
+    - Compile JSX.
+    - Transpile JS.
+    - Linting.
+    - Generate index.html
+    - Reload on save.
+  - All via one command.
+      - Node.
+      - Webpack: Bundle your assets. Configured via object literal:
+          - webpack.coonfig.dev.js
+      - Babel: JavaScript compiler. We can use next-generation JavaScript.
+        - Transpile modern JavaScript down to supported browsers.
+        - Compile JSX to JavaScript. e.g.: React.createElement();
+      - npm Scripts: "scripts" within package.json.
+        - NOTE: EADDRINUSE error. 
+        - Another instance of the app is running on the port.
+      - ESLint: Quickly notified of potential issues within the codebase.
+        - Tell ESLint to use the recommended settings.
+          ```javascript
+            { jsx: true}
+          ```
+          - Tell WebPack to run ESLint for us: e.g.: "eslint-loader"
+          - NOTE: Rules are processed from the bottom up.
+          - Programmatically enforce coding standards.
+      - VS Code.
+      - Prettier. Auto-format.
+      - package.json
+
+- REACT COMPONENT APPROACHES:
+  - React component creation approaches:
+  - Container versus Presentational Component.

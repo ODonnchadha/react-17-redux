@@ -289,7 +289,82 @@
             - What actions do you want to pass to your component on props?
             - Redux benefits: No manual unsubscribe.
             - Declare what subset of state you want. Enhanced performance for free.
-      - mapStateToProps:
-      - mapDispatchToProps:
-  - A chat with Redux:
-    - 
+      - mapStateToProps: What part of the Redux store do you want to expose as props on tyour component.
+        - This function returns an object.
+          - Filter or transform state for use.
+          - Being specific here improves performance. The component will only re-render when the specific data changes.
+          - Upon every update, the mapStateToProps function is called.
+            - Try not to perform expensive operations within. filter. mapping.
+              - e.g.: Memoize. Was this called with the same parameters? If so, reuse.
+      - mapDispatchToProps: What actions do I want to expose as props?
+        - Dispatch as its lone parameter.
+        - Four ways in which to handle: How you expose your actions to your components.
+          - Ingore it: Use dispatch directly.
+            ```javascript
+              this.props.dispatch(loadCources());
+            ```
+            - Two downsides: Additional boilerplate. Redux concerns in child components. Tied to Redux.
+          - Wrap manually: Wrap creators in dispatch calls.
+            ```javascript
+              function mapDispatchToProps(dispatch) {
+                return {
+                  loadCourses: () -> {
+                    dispatch(loadCourses());
+                  },
+                  createCourse: (course) => {
+                    dispatch(createCourse(course));
+                  }
+                }
+              }
+              // In component.
+              this.props.loadCourses();
+            ```
+            - Wrapping each call to action creator in an anonymous function that calls dispatch.
+          - bindActionCreators: This ships with Redux.
+            ```javascript
+              function mapDispatchToProps(dispatch) {
+                return {
+                  actions: bindActionCreators(actions, dispatch)
+                };
+              }
+              // In component.
+              this.props.actions.loadCourses();
+            ```
+            - bindActionCreators wraps action in dispatch call for you.
+          - Return object: Wrapped in dispatch automatically. Most concise.
+            ```javascript
+              const mapDispatchToProps = {
+                loadCourses
+              };
+              // In component.
+              this.props.loadCourses();
+            ```
+  - A fireside chat with Redux:
+    - React: SOmeone clicked "Save Course."
+    - Action: I will dispatch an action so reducers that care can update state.
+    - Reducer: I can a copy of the current state and the action to perform. I will make a new copy of the state and return it.
+    - Store: Thank you for updating the state reducer. I will ensure that all connected components are aware.
+    - React-Redux: Thank you for the new data, Store. I will now intelligently determine if I should rtell React about the change so that it only has to bother with updating the UI when necessary.
+    - React: New data! I will update to UI to reflect this.
+
+- REDUX FLOW:
+  - Initial Redux Setup:
+    1. Create action.
+    2. Create reduce.
+    3. Create root reducer.
+    4. Configure store.
+    5. Instantiate store.
+    6. Connect component.
+    7. Pass props via connect.
+    8. Dispatch action.
+  - Add feature:
+    1. CReate action.
+    2. Enhance reducer.
+    3. Connect component.
+    4. Dispatch action.
+
+- ASYNC IN REDUX:
+
+- ASYNC WRITES IN REDUX:
+
+- ASYNC STATUS AND ERROR HANDLING:

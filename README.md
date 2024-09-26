@@ -362,6 +362,95 @@
     2. Enhance reducer.
     3. Connect component.
     4. Dispatch action.
+  ```javascript
+    // Object spread to copy the state, and then override the title the title.
+    // NOTE: With object spread, values on the right override thos on the left.
+    const course = { ...this.state.course, title: event.target.value };
+    // Object shorthand syntax. Clone existing state. Update it. 
+    // And then called setState with that new object. 
+    this.setState({course})
+    // NOTE: Beware the method inheriting the *this* context of the caller.
+    <input type="text" onChange={this.handleChange.bind(this)} value={this.state.course.title}>
+    // NOTE: THis is not ideal since a new function is allocated on every render.
+    // In the constructor:
+    this.handleChange = this.handleChange.bind(this);
+    // Or this: Class field.
+    // Arrow functions inherit the binding context of their enclosing scope.
+    handleChange = event => {
+      const course = { ...this.state.course, title: event.target.value };
+      this.setState({course});
+    }
+  ```
+  - React hooks let us use functions to avoid this complexity. For everything.
+    - No confusion over thei `this` keyword binding.
+  ```javascript
+    // Not recommended to place this onClick handler to the submit button.
+    // By attaching an onSubmit handler to the form, both the submit button and the enter key will submit the form.
+    <form onSubmit={this.handleSubmit}>
+    // Prevent the form to disallow the entire form to post back.
+    handleSubmit = (event) => {
+      event.preventDefault();
+    }
+  ```
+  - Actions: Saving, deleting, and editing a course.
+    ```javascript
+      // Note: Object shorthand syntax
+        export function createCourse(course) {
+          return { type: "CREATE_COURSE", course };
+        }
+        // Function that will handle the action: reducer(s).
+        // Remember: Each reducer handles a 'slice' of state. 
+        // A portion of the entire Redux store.
+        export default function courseReducer(state = [], action) {
+          switch (action.type) {
+            case: "CREATE_COURSE":
+              // Ensure that you do not nutate state.
+              // Clone state. And then clone the course passed in.
+              return [...state, { ...action.course } ];
+            default:
+                return state;
+          }
+        }
+        // Our store:
+        const courses = [
+          { id: 1, title: "Course 1" },
+          { id: 2, title: "Course 2" },
+        ]
+        courses.find(c => c.id == 2);
+        // By Id:
+        const courses = {
+          1: { id: 1, title: "Course 1" },
+          2: { id: 2, title: "Course 2" },
+        }
+        courses[2];
+        // normalizing state shape.
+    ```
+    - Combine reducers. And create and export rootReducer.
+      - NOTE: When you export default you can name the import whatever you'd like.
+    - Create Redux store. Define a function that configures the store. Import rootReducer.
+      ```javascript
+        // Redux middleware is a way to enhance Redux's behavior. 
+        // reduxImmutableStateInvariant(). 
+        // Note the (). This is a function that needs to be executede.
+        export default function configureStore(initialState) {
+          // Add support for Redux Dev Tools.
+          const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+          return createStore(rootReducer, initialState, 
+          composeEnhancers(applyMiddleware(reduxImmutableStateInvariant())));
+        }
+      ```
+      ```javascript
+      // Remember: You have to dispatch an action. 
+      // If you just call an action creator it won't do anything.
+      // Action creators just return an object.
+        this.props.dispatch(courseActions.createCourse(this.state.course));
+
+        CoursesPage.propTypes = {
+          dispatch: PropTypes.func.isRequired
+        };
+        // connect automatically passes dispatch in if we omit mapDispatchToProps here.
+        export default connect(mapStateToProps)(CoursesPage);
+      ```
 
 - ASYNC IN REDUX:
 

@@ -75,6 +75,10 @@ CoursesPage.propTypes = {
   loading: PropTypes.bool.isRequired
 };
 
+// This function determines what state is passed to our component via props.
+// NOTE: Be specific. Request only the data your component needs.
+// ownProps: Access props that are being attached to the component.
+// function mapStateToProps(state, ownProps) {
 function mapStateToProps(state) {
   return {
     courses:
@@ -91,6 +95,8 @@ function mapStateToProps(state) {
   };
 }
 
+// This lets us declare what actions to pass to our component on props.
+// When we omit mapDispatchToProps, our component gets a dispatch prop injected automatically.
 function mapDispatchToProps(dispatch) {
   return {
     actions: {
@@ -101,6 +107,11 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
+// Decorate container component using connect.
+// Connect returns a function. That function then calls our component.
+// OR:
+// const connectedStateAndProps = connect(mapStateToProps, mapDispatchToProps);
+// export default connectedStateAndProps(CoursesPage);
 export default connect(
   mapStateToProps,
   mapDispatchToProps

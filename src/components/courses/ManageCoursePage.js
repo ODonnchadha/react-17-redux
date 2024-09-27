@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
+// Using named imports with our actions to simplify mapDispatchToProps.
 import { loadCourses, saveCourse } from "../../redux/actions/courseActions";
 import { loadAuthors } from "../../redux/actions/authorActions";
 import PropTypes from "prop-types";
@@ -8,6 +9,8 @@ import { newCourse } from "../../../tools/mockData";
 import Spinner from "../common/Spinner";
 import { toast } from "react-toastify";
 
+// The bound action passed in on props "Wins."
+// Function scope takes precedence over module scope.
 export function ManageCoursePage({
   courses,
   authors,
@@ -114,6 +117,10 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
+// Object form of mapDispatchToProps in order to simplify the code.
+// If we declare mapDispatchToProps as an object instead, each property will automatically be bound to dispatch.
+// NOTE: These names are the same as the unbound thunks we imported at the top.
+// This passes the *bound* action creator in on props under the same name.
 const mapDispatchToProps = {
   loadCourses,
   loadAuthors,

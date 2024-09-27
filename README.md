@@ -1,13 +1,13 @@
-# Starter Kit for [Building Applications in React and Redux](http://www.pluralsight.com/author/cory-house) on Pluralsight
+### Starter Kit for [Building Applications in React and Redux](http://www.pluralsight.com/author/cory-house) on Pluralsight
 
-## Get Started
+### Get Started
   - 1. **Install [Node 8](https://nodejs.org)** or newer. Need to run multiple versions of Node? Use [nvm](https://github.com/creationix/nvm) or [nvm-windows](https://github.com/coreybutler/nvm-windows)(https://github.com/coryhouse/pluralsight-redux-starter/archive/master.zip)
   - 2. **Navigate to this project's root directory on the command line.**
   - 3. **Install Node Packages.** - `npm install`
   - 4. **Install [React developer tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en) and [Redux Dev Tools](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=en)** in Chrome.
   - 5. Having issues? See below.
 
-## Having Issues? Try these things first:
+### Having Issues? Try these things first:
   - 1. Run `npm install` - If you forget to do this, you'll get an error when you try to start the app later.
   - 2. Don't run the project from a symbolic link. It will cause issues with file watches.
   - 3. Delete any .eslintrc in your user directory and disable any ESLint plugin / custom rules within your editor since these will conflict with the ESLint rules defined in the course.
@@ -444,16 +444,120 @@
       // If you just call an action creator it won't do anything.
       // Action creators just return an object.
         this.props.dispatch(courseActions.createCourse(this.state.course));
-
+        // Keys help React track earch array element.
+        { this.props.courses.map(course => (
+          <div key={course.title}>
+            {course.title}
+          </div>
+        ))}
         CoursesPage.propTypes = {
+          courses: PropTypes.array.isRequired,
           dispatch: PropTypes.func.isRequired
         };
         // connect automatically passes dispatch in if we omit mapDispatchToProps here.
         export default connect(mapStateToProps)(CoursesPage);
       ```
+      ```javascript
+        // Remember, if you don't call dispatch, nothing will happen.
+        // Action creators must be called by dispatch. 
+        function mapDispatchToProps(dispatch) {
+          return {
+            createCourse: course => dispatch(courseActions.createCourse(course));
+          };
+        }
+        // We don't need to call dispatch here since that being handled in mapDispatchToProps.
+        handleSubmit (event) => {
+          event.preventDefault();
+          this.props.createCourse(this.state.course);
+        }
+        CoursesPage.propTypes = {
+          courses: PropTypes.array.isRequired,
+          // Since we declared mapDispatchToProps, dispatch is no longer injected.
+          // Only the actions we declared in mapDispatchToProps are passed in.
+          createCourse: PropTypes.func.isRequired
+        };
+      ```
+      ```javascript
+        function mapDispatchToProps(dispatch) {
+          return {
+            actions: bindActionCreators(courseActions, dispatch);
+          };
+        }
+        CoursesPage.propTypes = {
+          courses: PropTypes.array.isRequired,
+          actions: PropTypes.object.isRequired
+        };
+        this.props.actions.createCourse(this.state.course);
+      ```
+      ```javascript
+        // When declared as an object, each property is automatically bound to dispatch.
+        const mapDispatchToProps = {
+          createCourse: courseActions.createCourse;
+        }
+      ```
 
 - ASYNC IN REDUX:
+  - Mock API merits. Ultra-fast. Test slowness.
+    - json-server.
+    - prestart:api will run before start:api because it has the same name, with `pre` on the front.
+    - This mocb db (db.json) is created each time we start the API.
+      - This assures that api starts with good data.
+    - json-server simulates a database by writing to db.json.
+    - run-p command allows us to run multiple npm scripts at the same time.
+  - Setup.
+  - Redux middleware.
+    - action -> middleware -> reducer.
+      - Handling async API calls. Logging. Crash reporting. Routing.
+  - Async libraries.
+    - redux-thunk: Returns functions from action creators.
+      - Functions.
+      - Clunky to test.
+      - Easy to learn.
+    - redux-promise: Use promises for async.
+    - redux-observable: Use RxJS observables.
+    - redux-saga: Use ES6 generators.
+      - Generators. Functions that can pause and resume later.
+      - Easy to test. Assert of effects.
+      - Hard to learn. Large API and generators.
+  - Implement thunks.
+    ```javascript
+      export function deleteAuthor(authorId) {
+        return (dispatch, getState) => {
+          return AuthorApi.deleteAuthor(authorId).then(() => {
+            duspatch(deletedAuthor(authorId));
+          }).catch(handleError);
+        };
+      }
+    ```
+    - Thunk: A function that returns a function.
+      - A function that wraps an expression to delay its evaluation.
+      - This allows use to avoid creating side effects with action, action creators, and components.
+      - getState. Useful for cache and authentication.
+    - Middleware isn't required to supprt async in Redux. But you probably want it.
+      - Don't have to pass dispatch with middleware.
+      - Big win with thunks. Your components can call sync and async actions the same way.
+      1. Consistency.
+      2. Purity. Avoid binding to side effects.
+      3. Easier testing.
+    - Load courses by dispatchig an action via Redux:
+      - options for when to load courses:
+        1. When the application loads.
+        2. When the course page is loaded.
+        ```javascript
+          componentDidMount() {
+            this.props.actions.loadCourses().catch(error => {
+              // TODO:
+            });
+          }
+        ```
 
 - ASYNC WRITES IN REDUX:
+  - 
 
 - ASYNC STATUS AND ERROR HANDLING:
+
+- TESTING REACT:
+
+- TESTING REDUX:
+
+- PRODUCTION BUILDS:

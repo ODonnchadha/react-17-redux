@@ -2,6 +2,7 @@ import * as types from "./actionTypes";
 import * as courseApi from "../../api/courseApi";
 import { beginApiCall, apiCallError } from "./apiStatusActions";
 
+// Action.
 export function loadCourseSuccess(courses) {
   return { type: types.LOAD_COURSES_SUCCESS, courses };
 }
@@ -18,6 +19,9 @@ export function deleteCourseOptimistic(course) {
   return { type: types.DELETE_COURSE_OPTIMISTIC, course };
 }
 
+// Thunk. Returns a function that accepts dispatch as an argument.
+// Redux thunk injects dispatch so we don't have to.
+// Success. Async request was successful.
 export function loadCourses() {
   return function(dispatch) {
     dispatch(beginApiCall());
@@ -26,7 +30,9 @@ export function loadCourses() {
       .then(courses => {
         dispatch(loadCourseSuccess(courses));
       })
+      // A call to a promise. So catch errors.
       .catch(error => {
+        // Centralized manner in which to catch errors.
         dispatch(apiCallError(error));
         throw error;
       });

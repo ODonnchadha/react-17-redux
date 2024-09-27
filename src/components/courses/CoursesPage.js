@@ -10,14 +10,17 @@ import Spinner from "../common/Spinner";
 import { toast } from "react-toastify";
 
 // class: Lifecycle methods and state.
+// Container component. Connected to Redux so not too much JSX inside.
 class CoursesPage extends React.Component {
   state = {
     redirectToAddCoursePage: false
   };
 
   componentDidMount() {
+    // Destructuring.
     const { courses, authors, actions } = this.props;
 
+    // Only load initially.
     if (courses.length === 0) {
       actions.loadCourses().catch(error => {
         alert("Loading courses failed" + error);
@@ -80,6 +83,7 @@ CoursesPage.propTypes = {
 // ownProps: Access props that are being attached to the component.
 // function mapStateToProps(state, ownProps) {
 function mapStateToProps(state) {
+  // We need both course and author data before we can perform this mapping.
   return {
     courses:
       state.authors.length === 0
@@ -87,6 +91,7 @@ function mapStateToProps(state) {
         : state.courses.map(course => {
             return {
               ...course,
+              // Add author name.
               authorName: state.authors.find(a => a.id === course.authorId).name
             };
           }),
@@ -100,6 +105,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     actions: {
+      // bindActionCreators will accept a function or an object.
+      // You can pass a single action creator to bindActionCreators as well.
       loadCourses: bindActionCreators(courseActions.loadCourses, dispatch),
       loadAuthors: bindActionCreators(authorActions.loadAuthors, dispatch),
       deleteCourse: bindActionCreators(courseActions.deleteCourse, dispatch)

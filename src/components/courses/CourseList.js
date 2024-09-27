@@ -2,6 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
+// Functional component. Presentational.
+// Every functional component receives props as an argument.
+// Here, we are destructuring courses, onDeleteClick. (Inline declaration.)
+// => omit `return` keyword.
 const CourseList = ({ courses, onDeleteClick }) => (
   <table className="table">
     <thead>

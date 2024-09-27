@@ -10,6 +10,7 @@ export default function courseReducer(state = initialState.courses, action) {
         course.id === action.course.id ? action.course : course
       );
     case types.LOAD_COURSES_SUCCESS:
+      // Whatever was returned from the API will simply replace what was in our state.
       return action.courses;
     case types.DELETE_COURSE_OPTIMISTIC:
       return state.filter(course => course.id !== action.course.id);

@@ -7,6 +7,7 @@ export default function configureStore(initialState) {
   const composeEnhancers =
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // add support for Redux dev tools
 
+    // Adding thunk to middleware.
   return createStore(
     rootReducer,
     initialState,

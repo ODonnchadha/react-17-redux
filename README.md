@@ -552,9 +552,16 @@
         ```
 
 - ASYNC WRITES IN REDUX:
-  - 
+  - With Redux, you'll often use the spread operator, map, filter, and reduce.
+  - React router: { Redirect }
+  - Reuseable Bootstrap form inputs.
+  - Populated the form via:
+    - mapStateToProps.
+    - useEffect.
 
 - ASYNC STATUS AND ERROR HANDLING:
+  - Dedicated actions:
+  - Dedicated reducers:
 
 - TESTING REACT:
 

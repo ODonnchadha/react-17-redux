@@ -21,7 +21,10 @@ export function ManageCoursePage({
   authors,
   loadAuthors,
   loadCourses,
+  // Now calling saveCourse in our component will call the saveCourse function
+  //   we just bound to dispatch in mapDispatchToProps.
   saveCourse,
+  // Need to destruct history.
   history,
   // Use the rest opreator to leverage any properties not destructured to props.
   ...props
@@ -34,6 +37,11 @@ export function ManageCoursePage({
   //   use the data, prefer plain React state. 
   //   With a form, only local components care about the data.
   const [course, setCourse] = useState({ ...props.course });
+  // As we are copying the course passed in on props to state once on load.
+  //   Before the list of courses is available. This logic is performed once.
+  // No course data is avaialbale. e.g.: Load the page directly.
+
+
   // Any errors that occur when validation is run.
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
@@ -57,6 +65,9 @@ export function ManageCoursePage({
       });
     }
   }, [props.course]);
+  // Ensure this Hook runs anytime a (new) course is passed in on props.
+  // Another option. Set a key on this component's route in App.js 
+  //   so it remounts when the key changes.
 
   // Managed components.
   function handleChange(event) {
@@ -86,13 +97,16 @@ export function ManageCoursePage({
     return Object.keys(errors).length === 0;
   }
 
-  // 
   function handleSave(event) {
     event.preventDefault();
     if (!formIsValid()) return;
     setSaving(true);
+    // This is passed in on props, so its already bound to dispatch.
+    // The bound saveCOurse on props takes precedence over the unbound saveCourse thunk at the top.
+    // This call returns a promise, thus the chained .then().
     saveCourse(course)
       .then(() => {
+        // Using React Router's history object to redirect.
         toast.success("Course saved.");
         history.push("/courses");
       })
@@ -124,20 +138,34 @@ ManageCoursePage.propTypes = {
   loadCourses: PropTypes.func.isRequired,
   loadAuthors: PropTypes.func.isRequired,
   saveCourse: PropTypes.func.isRequired,
+  // Any component loaded via <Route> gets history passed in on props via React Router.
   history: PropTypes.object.isRequired
 };
 
+// This is a selector. It selects data from the Redux store.
+// You could also declare this in the course reducer for easy reuse.
+// For performance, you could memoize using `reselect.`
 export function getCourseBySlug(courses, slug) {
   return courses.find(course => course.slug === slug) || null;
 }
 
+// ownProps lets us access the component's props.
+// We can use this to read the URL data injected on props by React Router.
+// BEWARE: state.courses is empty since the API call to getCourses() has not yet completed.
+//   NOTE: state.courses.length > 0
+// REMEMBER: mapStateToProps runs every time the Redux store changes.
+//   So when courses are available, we'll effectively call the getCourseBySlug function.
 function mapStateToProps(state, ownProps) {
+  // From App.js. Access in mapStateToProps via ownProps.match.params.slug.
   const slug = ownProps.match.params.slug;
+  // Are users requesting an existing course?
   const course =
     slug && state.courses.length > 0
       ? getCourseBySlug(state.courses, slug)
       : newCourse;
   return {
+    // GOAL: Populate the course object based upon the URL.
+    // Or, to an ampty course otherwise.
     course,
     courses: state.courses,
     authors: state.authors

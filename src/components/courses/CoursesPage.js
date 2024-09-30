@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 // class: Lifecycle methods and state.
 // Container component. Connected to Redux so not too much JSX inside.
 class CoursesPage extends React.Component {
+  // Adding value to state. We can use this to trigger a redirect.
   state = {
     redirectToAddCoursePage: false
   };
@@ -43,6 +44,8 @@ class CoursesPage extends React.Component {
     }
   };
 
+  // Render has a side effect: this.state.redirectToAddCoursePage.
+  // Right-hand side will evaluate when the left-hand side is true.
   render() {
     return (
       <>

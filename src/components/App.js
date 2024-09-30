@@ -14,6 +14,9 @@ import PageNotFound from "./PageNotFound";
 // NOTE: `exact` within the root { HomePage} route.
 // Header will always render.
 function App() {
+  // The slug is a url friendly id. It's more readable.
+  // Since only one route in Switch can match, we need to decalre the more specific route first.
+  // The moment react-router finds a matching route, it stops searching.
   return (
     <div className="container-fluid">
       <Header />
@@ -21,8 +24,10 @@ function App() {
         <Route exact path="/" component={HomePage} />
         <Route path="/about" component={AboutPage} />
         <Route path="/courses" component={CoursesPage} />
+
         <Route path="/course/:slug" component={ManageCoursePage} />
         <Route path="/course" component={ManageCoursePage} />
+        
         <Route component={PageNotFound} />
       </Switch>
       <ToastContainer autoClose={3000} hideProgressBar />

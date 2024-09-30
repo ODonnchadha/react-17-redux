@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+// An array of options, whcih are then mapped over.
+// These basic components will reduce complexity and enforce consistency.
 const SelectInput = ({
   name,
   label,

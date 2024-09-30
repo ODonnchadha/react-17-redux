@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import TextInput from "../common/TextInput";
 import SelectInput from "../common/SelectInput";
 
+// FUnctional component with destructured props.
 const CourseForm = ({
   course,
   authors,

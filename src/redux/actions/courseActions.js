@@ -2,7 +2,7 @@ import * as types from "./actionTypes";
 import * as courseApi from "../../api/courseApi";
 import { beginApiCall, apiCallError } from "./apiStatusActions";
 
-// Action.
+// Action(s).
 export function loadCourseSuccess(courses) {
   return { type: types.LOAD_COURSES_SUCCESS, courses };
 }
@@ -39,8 +39,10 @@ export function loadCourses() {
   };
 }
 
+// Thunk. With the dispatched actions. New course? Existing course?
 export function saveCourse(course) {
   //eslint-disable-next-line no-unused-vars
+  // getState lets us access the Redux store data.
   return function(dispatch, getState) {
     dispatch(beginApiCall());
     return courseApi

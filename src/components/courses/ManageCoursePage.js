@@ -1,3 +1,4 @@
+// The useState() hook allows us to add React state to functional components.
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 // Using named imports with our actions to simplify mapDispatchToProps.
@@ -5,12 +6,16 @@ import { loadCourses, saveCourse } from "../../redux/actions/courseActions";
 import { loadAuthors } from "../../redux/actions/authorActions";
 import PropTypes from "prop-types";
 import CourseForm from "./CourseForm";
+// Empty class is defined here
 import { newCourse } from "../../../tools/mockData";
 import Spinner from "../common/Spinner";
 import { toast } from "react-toastify";
 
 // The bound action passed in on props "Wins."
 // Function scope takes precedence over module scope.
+// Made this a functional component. Replaced componentDidMount with useEffect().
+// Hooks allow us to handle state and side effects (think lifecycle methods) in function components.
+// Prefer function components over class components. FUnctions with hooks are easier to declare and maintain.
 export function ManageCoursePage({
   courses,
   authors,
@@ -18,12 +23,25 @@ export function ManageCoursePage({
   loadCourses,
   saveCourse,
   history,
+  // Use the rest opreator to leverage any properties not destructured to props.
   ...props
 }) {
+  // useState returns a pair of values. First: Value. Second: Setter function.
+  // props.course is different to the destructured course.
+  // React state? Why not Redux? Unnecessary and avoids complexitity.
+  // To choose Redux versus local state:
+  // Who cares about this data? If only a few closely-related components 
+  //   use the data, prefer plain React state. 
+  //   With a form, only local components care about the data.
   const [course, setCourse] = useState({ ...props.course });
+  // Any errors that occur when validation is run.
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
 
+  // Will this hook run every time the component renders? Perhaps.
+  // Declare a second argument as an array of items for it to watch.
+  // The empty array as a second argument to effect means the effect will run once when the component mounts.
+  // [] as a second argument is the very same as componentWillMount().
   useEffect(() => {
     if (courses.length === 0) {
       loadCourses().catch(error => {
@@ -40,11 +58,18 @@ export function ManageCoursePage({
     }
   }, [props.course]);
 
+  // Managed components.
   function handleChange(event) {
+    // Destructuring of the event.
+    // This destructure avoids the event getting garbage collected 
+    //   so that it's available within the nested setCourse callback.
     const { name, value } = event.target;
     setCourse(prevCourse => ({
       ...prevCourse,
+      // JavaScript's computed property syntax. It allows us to reference a property via a variable.
+      // "title" becomes course.title.
       [name]: name === "authorId" ? parseInt(value, 10) : value
+      // Events return numbers as strings, so we need to convert the id to an int here.
     }));
   }
 
@@ -61,6 +86,7 @@ export function ManageCoursePage({
     return Object.keys(errors).length === 0;
   }
 
+  // 
   function handleSave(event) {
     event.preventDefault();
     if (!formIsValid()) return;
@@ -76,6 +102,7 @@ export function ManageCoursePage({
       });
   }
 
+  // No need for a render() statement within a functional compnent.
   return authors.length === 0 || courses.length === 0 ? (
     <Spinner />
   ) : (
